@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edit2video"
+version = "0.1.0"
+description = "Imagens de referência -> imagens editadas (Qwen-Image-Edit-2511) -> vídeos curtos (Wan2.2-I2V-A14B), dirigido por YAML."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.4",
+  "diffusers>=0.36",          # QwenImageEditPlusPipeline e WanImageToVideoPipeline (instale do GitHub se faltar)
+  "transformers>=4.51",
+  "accelerate",
+  "peft",                     # LoRA Lightning
+  "huggingface_hub",
+  "imageio[ffmpeg]",
+  "pillow",
+  "pyyaml",
+  "sentencepiece",
+  "ftfy",
+]
+
+[project.scripts]
+edit2video = "edit2video.cli:main"
+
+[tool.setuptools]
+packages = ["edit2video"]

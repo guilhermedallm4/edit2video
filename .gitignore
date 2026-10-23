@@ -1,0 +1,9 @@
+__pycache__/
+*.egg-info/
+.venv/
+outputs/
+**/outputs/
+# fotos de pessoas nunca vão para o repositório
+refs/
+examples/demo/refs/
+*.mp4

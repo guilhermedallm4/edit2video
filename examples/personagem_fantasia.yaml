@@ -1,0 +1,65 @@
+# Exemplo completo (modelo para o seu projeto): uma pessoa vira um personagem fantasiado, em várias cenas,
+# e cada cena vira um vídeo. Coloque as SUAS fotos em refs/ (com autorização de quem aparece nelas).
+
+output_dir: outputs
+models:
+  # Se você já tem o Qwen/Qwen-Image no cache, reaproveite o text_encoder e o VAE (pesos idênticos; economiza 17 GB):
+  # edit_share_components_from: Qwen/Qwen-Image
+
+references:
+  rosto: refs/rosto.jpg              # foto de frente, nítida, rosto grande
+  corpo: refs/corpo_inteiro.jpg      # corpo inteiro (proporções reais)
+  fantasia: refs/fantasia.jpg        # referência da roupa/personagem
+
+edit_defaults:
+  variations: 3
+  negative: >-
+    different person, changing identity, deformed face, extra limbs, extra fingers, text, watermark, logo, blurry
+
+images:
+  - name: retrato
+    refs: [rosto, corpo, fantasia]
+    size: [928, 1152]
+    prompt: >-
+      Image 1 shows the man's face: keep it exactly, the same real human face, natural skin tone and face shape.
+      His body build matches the man in image 2. He wears the costume shown in image 3.
+      Waist-up portrait, looking at the camera. Photorealistic cinematic photo, warm dramatic lighting.
+
+  - name: cena_comendo
+    refs: [retrato, rosto]           # usa a variação ESCOLHIDA de "retrato" como image 1 (consistência)
+    size: [1280, 720]
+    prompt: >-
+      Keep exactly the same character as image 1, with the face of the man in image 2. Change only the scene:
+      he sits at a table holding a big slice of pizza near his smiling mouth, about to take a bite. Photorealistic.
+
+  - name: cena_bracos_abertos
+    refs: [retrato, rosto]
+    size: [1280, 720]
+    prompt: >-
+      Keep exactly the same character as image 1, with the face of the man in image 2. Change only the pose:
+      standing, arms spread wide open in celebration, same background. Photorealistic.
+
+videos:
+  - name: comendo
+    first: cena_comendo
+    prompt: >-
+      He takes a big bite of the pizza, the cheese stretches, he chews happily and smiles at the camera.
+      His face stays the same. Static camera, photorealistic, natural motion.
+    frames: 81                       # 5,0 s a 16 fps
+    seeds: [1, 2, 3]
+
+  - name: comemora
+    first: cena_comendo
+    last: cena_bracos_abertos        # o vídeo termina exatamente nesta imagem
+    prompt: >-
+      He puts the pizza down, stands up and spreads his arms wide open in celebration. Static camera.
+    frames: 81
+    seeds: [1, 2]
+    mode: standard                   # 40 passos: mais lento (~35 min), mais detalhe
+
+finish:
+  fps: 24
+  width: 1920
+  height: 1080
+  concat: true                       # emenda os vídeos escolhidos com crossfade
+  xfade: 0.5

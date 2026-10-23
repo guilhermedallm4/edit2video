@@ -1,0 +1,31 @@
+# Demo com referências sintéticas (geradas por scripts/make_demo_refs.py) — testa o pipeline inteiro.
+#   python scripts/make_demo_refs.py examples/demo/refs
+#   edit2video run examples/demo.yaml --auto
+
+output_dir: demo/outputs
+
+references:            # nome -> arquivo (relativo a este YAML)
+  personagem: demo/refs/personagem.png
+  chapeu: demo/refs/chapeu.png
+
+images:                # quantas imagens você quiser; cada uma com suas referências
+  - name: chef
+    refs: [personagem, chapeu]          # -> image 1, image 2 no prompt
+    prompt: >-
+      Turn the orange clay ball character from image 1 into a cute claymation chef wearing the white chef hat from
+      image 2, standing behind a wooden kitchen counter with a pizza, warm kitchen lighting, stop-motion style.
+    size: [1280, 720]
+    variations: 2
+
+videos:                # quantos vídeos você quiser, a partir das imagens escolhidas
+  - name: chef_acena
+    first: chef                         # 1º quadro = variação escolhida da imagem "chef"
+    prompt: >-
+      The claymation chef waves happily at the camera and then tosses the pizza dough into the air,
+      stop-motion animation, static camera.
+    frames: 49                          # ~3 s a 16 fps (precisa ser 4k+1)
+    seeds: [1]
+    mode: lightning
+
+finish:
+  ffmpeg: ffmpeg
